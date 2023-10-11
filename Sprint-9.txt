@@ -1,0 +1,39 @@
+BEGIN;
+
+
+CREATE TABLE IF NOT EXISTS public.prioridad
+(
+    prioridad_id integer NOT NULL,
+    CONSTRAINT prioridad_pkey PRIMARY KEY (prioridad_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.tareas
+(
+    titulo character varying COLLATE pg_catalog."default" NOT NULL,
+    prioridad_id integer NOT NULL,
+    usuarios_id integer NOT NULL DEFAULT nextval('tareas_usuarios_id_seq'::regclass),
+    completado boolean NOT NULL,
+    tareas_id integer NOT NULL DEFAULT nextval('tareas_tareas_id_seq'::regclass),
+    CONSTRAINT tareas_id PRIMARY KEY (tareas_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.usuarios
+(
+    usuario_id integer NOT NULL DEFAULT nextval('usuarios_usuario_id_seq'::regclass),
+    CONSTRAINT usuarios_pkey PRIMARY KEY (usuario_id)
+);
+
+ALTER TABLE IF EXISTS public.tareas
+    ADD CONSTRAINT prioridad_id FOREIGN KEY (prioridad_id)
+    REFERENCES public.prioridad (prioridad_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.tareas
+    ADD CONSTRAINT usuario_id FOREIGN KEY (usuarios_id)
+    REFERENCES public.usuarios (usuario_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+END;
